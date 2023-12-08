@@ -14,7 +14,7 @@ export default function FeaturedPost({ post }) {
     return (
 
 
-        <Grid item xs={6} sx={{
+        <Grid item xs={20} md={6} sx={{
             '& .markdown': {
             },
 
@@ -32,7 +32,7 @@ export default function FeaturedPost({ post }) {
                             <CardContent sx={{ flex: 1 }}>
                                 <CardMedia
                                     component="img"
-                                    sx={{ width: 500, display: { xs: 'block', sm: 'none' }, cursor: 'pointer' }}
+                                    sx={{ width: 400, display: { xs: 'block', sm: 'none' }, cursor: 'pointer' }}
                                     image={"https:" + post.fields.imagecontent.fields.file.url}
                                     alt="Content"
                                 />

@@ -35,7 +35,7 @@ function MainFeaturedPost(props) {
         }}
       />
       <Grid container>
-        <Grid item md={6} padding={2}>
+        <Grid item xs={20} md={6} padding={2}>
           <Box
             sx={{
               position: 'relative',
