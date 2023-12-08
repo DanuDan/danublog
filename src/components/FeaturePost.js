@@ -27,8 +27,8 @@ export default function FeaturedPost({ post }) {
 
 
                 {post.map((post, i) => (
-                    <CardActionArea component="a" href={"blog/" + post.fields.slug}>
-                        <Card key={i} sx={{ display: 'flex', mb: 2 }}>
+                    <CardActionArea key={i} component="a" href={"blog/" + post.fields.slug}>
+                        <Card  sx={{ display: 'flex', mb: 2 }}>
                             <CardContent sx={{ flex: 1 }}>
                                 <CardMedia
                                     component="img"
