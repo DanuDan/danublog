@@ -54,11 +54,10 @@ export default function detailBlog({ blogs }) {
                         backgroundSize: 'cover',
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'center',
-                        backgroundImage: `url(${blogs.fields.imagecontent.fields.file.url})`,
+                        backgroundImage: `url(${blogs?.fields?.imagecontent.fields.file.url})`,
                     }}
                 >
-                    {/* Increase the priority of the hero background image */}
-                    {<img style={{ display: 'none' }} src={"https:" + blogs.fields.imagecontent.fields.file.url} alt="detailContent" />}
+                    {<img style={{ display: 'none' }} src={"https:" + blogs?.fields?.imagecontent.fields.file.url} alt="detailContent" />}
                     <Box
                         sx={{
                             position: 'absolute',
@@ -78,7 +77,7 @@ export default function detailBlog({ blogs }) {
                                 }}
                             >
                                 <Typography component="h1" variant="h3" color="inherit" gutterBottom>
-                                    {blogs.fields.title}
+                                    {blogs?.fields?.title}
                                 </Typography>
 
                             </Box>
@@ -86,14 +85,14 @@ export default function detailBlog({ blogs }) {
                     </Grid>
                 </Paper>
                 <Typography component="h1" variant="h3" color="inherit" gutterBottom>
-                    {blogs.fields.title}
+                    {blogs?.fields?.title}
                 </Typography>
                 <Typography variant="subtitle1" color="primary">
-                    Views : {blogs.fields.views}
+                    Views : {blogs?.fields?.views}
                 </Typography>
 
                 <Typography component="h2" variant="h5">
-                    {documentToReactComponents(blogs.fields.description)}
+                    {documentToReactComponents(blogs?.fields?.description)}
                 </Typography>
             </Grid>
         </Container>
