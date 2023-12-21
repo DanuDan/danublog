@@ -19,14 +19,14 @@ return contents.data
  }
 }
 
-export const getContent = async ({id} : {id : number}) => {
+export const getContent = async ({slug} : {slug : string}) => {
     try{
        const headers = {
            headers: {
                'Authorization' : 'Bearer ' + token
            }
        }
-       const contents = await axios.get(`${url}api/contents/${id}?populate=*`, headers)
+    const contents = await axios.get(`${url}api/contents?filters[slug][$eq]=${slug}&populate=*`, headers)
    return contents.data
     }
     catch(error){
@@ -35,7 +35,7 @@ export const getContent = async ({id} : {id : number}) => {
    }
    
 
-export const contentsKey = createQueryKeys('content', {
+export const contentsKey = createQueryKeys('contents', {
     list: (filters) => ({
         queryKey: [{filters}],
         queryFn: (ctx) => getContents

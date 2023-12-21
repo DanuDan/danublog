@@ -6,13 +6,12 @@ import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import { Card, CardContent, CardMedia } from '@mui/material';
 
-export default function Sidebar({ archives, description, social, title, post } : { archives? :any , description?: any, social?: any, title?: any, post?: any }) {
+export default function Sidebar({ description, social, title, post } : { description?: any, social?: any, title?: any, post?: any }) {
 
 
-
-    // const topPopularPosts = post
-    //     .sort((a, b) => b.views - a.views)
-    //     .slice(0, 5);
+    const topPopularPosts: any[]= post?.sort((a, b) => {
+        return b?.attributes?.Views - a?.attributes?.Views;
+      }).slice(0, 5);
 
     // function formatDate(dateString) {
     //     const date = new Date(dateString);
@@ -31,25 +30,43 @@ export default function Sidebar({ archives, description, social, title, post } :
                     {title}
                 </Typography>
                 <Typography>{description}</Typography>
+                {topPopularPosts?.map((items, i) => (
+                    <Card key={i} sx={{ display: 'flex', mt: 2 }} >
+                        <CardContent sx={{ flex: 1 }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                                {items.attributes.Title}
+                            </Typography>
+                            <Typography variant="subtitle2">
+                                {items.attributes.Date}
+                            </Typography>
+                        </CardContent>
+                        <CardMedia
+                            component="img"
+                            sx={{ width: 100, height: 100, display: { xs: 'none', sm: 'block' } }}
+                            image={"http://localhost:1337" + items?.attributes.ImageContent.data.attributes.url}
+                            alt="populerContent"
+                        />
+                    </Card>
+                ))}
             </Paper>
             <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
                 Social
             </Typography>
 
-            {/* {social.map((network : string) => (
+            {social.map((items : any) => (
                 <Link
                     display="block"
                     variant="body1"
                     href="#"
-                    key={network?.name}
+                    key={items?.name}
                     sx={{ mb: 0.5 }}
                 >
                     <Stack direction="row" spacing={1} alignItems="center">
-                        <network.icon />
-                        <span>{network.name}</span>
+                        <items.icon />
+                        <span>{items.name}</span>
                     </Stack>
                 </Link>
-            ))} */}
+            ))}
         </Grid>
     );
 }

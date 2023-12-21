@@ -2,29 +2,34 @@ import * as React from 'react';
 import { Box, Container, Grid, Paper, Typography } from "@mui/material"
 import { getContent, getContents } from '../../../services/contents';
 import parse from "html-react-parser"
+import { QueryClient, dehydrate } from '@tanstack/react-query';
 
 export const getStaticPaths = async () => {
     const data = await getContents()
     const paths = data.data?.map(item => {
-                return {
-                    params: { id: item.id.toString() },
-                }
-            })
+        return {
+            params: { slug: item.attributes.slug },
+        }
+    })
     return {
       paths: paths,
       fallback: true,
     };
   };
 
-  export const getStaticProps = async (ctx) =>{
-    const  id  = ctx.params
-    const data = await getContent(id)
+export const getStaticProps = async (ctx) =>{
+    const queryClient = new QueryClient()
+    const  slug  = ctx.params
+    const data = await getContent(slug)
+    await queryClient.prefetchQuery({ queryKey: ['contents'], queryFn: () => getContent(slug)})
+
 
     return {
         props: {
-          posts: data.data
+          posts: data.data[0],
+          dehydratedState: dehydrate(queryClient)
         },
-        revalidate: 60
+        revalidate: 10
       }
     }
 
@@ -42,10 +47,10 @@ export default function detailBlog({ posts } : {posts?:any}) {
                         backgroundSize: 'cover',
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'center',
-                        backgroundImage: `url(${"http://localhost:1337" + posts?.attributes?.ImageContent.data.attributes.url})`,
+                        backgroundImage: `url(${"http://localhost:1337" + posts?.attributes?.ImageContent?.data.attributes.url})`,
                     }}
                 >
-                    {/* {<img style={{ display: 'none' }} src={"https:" + posts?.fields?.imagecontent.fields.file.url} alt="detailContent" />} */}
+                    {<img style={{ display: 'none' }} src={"https:" + posts?.attributes?.ImageContent?.data.attributes.url} alt="detailContent" />}
                     <Box
                         sx={{
                             position: 'absolute',
@@ -79,7 +84,7 @@ export default function detailBlog({ posts } : {posts?:any}) {
                     Views : {posts?.attributes?.Views}
                 </Typography>
                 <Typography component="h2" variant="h5">
-                    {parse(`${posts?.attributes.content}`)}
+                    {parse(`${posts?.attributes?.content}`)}
                 </Typography>
             </Grid>
         </Container>

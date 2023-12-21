@@ -12,8 +12,6 @@ import parse from "html-react-parser"
 export default function FeaturedPost({ post } : {post?:any}) {
 
     return (
-
-
         <Grid item xs={18} md={6} sx={{
             '& .markdown': {
             },
@@ -24,7 +22,7 @@ export default function FeaturedPost({ post } : {post?:any}) {
                 mt: 3
             }}>
                 {post?.map((post:any, i) => (
-                    <CardActionArea key={i} component="a" href={"blogs/" + post?.id}>
+                    <CardActionArea key={i} component="a" href={"blogs/" + post?.attributes.slug}>
                         <Card  sx={{ display: 'flex', mb: 2 }}>
                             <CardContent sx={{ flex: 1 }}>
                                 <CardMedia
@@ -67,10 +65,7 @@ export default function FeaturedPost({ post } : {post?:any}) {
                     </CardActionArea>
                  ))
                 }
-
-
             </Box>
-
         </Grid>
     );
 }

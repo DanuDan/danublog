@@ -15,8 +15,18 @@ import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
 import { getContents } from '../services/contents';
 import Header from '../components/Header';
 
+interface SocialItem {
+  name: string;
+  icon: any;
+}
 
-const sidebar = {
+interface SidebarProps {
+  title: string;
+  description: string;
+  social: SocialItem[];
+}
+
+const sidebar: SidebarProps = {
   title: 'Most Populer',
   description: 'Jangan lewatkan topik yang sedang viral saat ini !',
   social: [
@@ -45,14 +55,10 @@ export async function getStaticProps(){
   }
 }
 
-export default function Home({ blogs } : {blogs:any}) {
 
 
+export default function Home() {
   const { isLoading, isError, data, error } = useQuery({queryKey: ['contents'], queryFn: () => getContents()})
-
-//   useEffect(() => {
-//     console.log(data)
-// }, [isLoading])
 
   return (
 
@@ -80,7 +86,7 @@ export default function Home({ blogs } : {blogs:any}) {
               {data?.name}
             </div>
             <Sidebar
-              post={blogs}
+              post={data?.data}
               title={sidebar.title}
               description={sidebar.description}
               social={sidebar.social}
