@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Box, Container, Grid, Paper, Typography } from "@mui/material"
 import { getContent, getContents } from '../../../services/contents';
 import parse from "html-react-parser"
-import { QueryClient, dehydrate } from '@tanstack/react-query';
+import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
 
 export const getStaticPaths = async () => {
     const data = await getContents()
@@ -19,23 +19,22 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps = async (ctx) =>{
     const queryClient = new QueryClient()
-    const  slug  = ctx.params
-    const data = await getContent(slug)
-    await queryClient.prefetchQuery({ queryKey: ['contents'], queryFn: () => getContent(slug)})
-
+    const  slug  = ctx.params    
+    await queryClient.prefetchQuery({ queryKey: ['content'], queryFn: () => getContent(slug)})
 
     return {
         props: {
-          posts: data.data[0],
-          dehydratedState: dehydrate(queryClient)
+          dehydratedState: dehydrate(queryClient).queries[0].state.data
         },
         revalidate: 10
       }
     }
 
-export default function detailBlog({ posts } : {posts?:any}) {
+export default function detailBlog({ dehydratedState } : {dehydratedState?:any}) {
+    const posts = dehydratedState.data[0]
 
     return (
+        <HydrationBoundary state={dehydratedState}>
         <Container maxWidth={`lg`}>
             <Grid>
                 <Paper
@@ -88,5 +87,6 @@ export default function detailBlog({ posts } : {posts?:any}) {
                 </Typography>
             </Grid>
         </Container>
+        </HydrationBoundary>
     )
 }

@@ -1,4 +1,3 @@
-import { createQueryKeys } from "@lukemorales/query-key-factory"
 import axios from "axios"
 
 const url = process.env.NEXT_PUBLIC_HOST_API || " "
@@ -34,10 +33,17 @@ export const getContent = async ({slug} : {slug : string}) => {
     }
    }
    
-
-export const contentsKey = createQueryKeys('contents', {
-    list: (filters) => ({
-        queryKey: [{filters}],
-        queryFn: (ctx) => getContents
-    })
-})
+export const searchContent = async (title : string) => {
+    try{
+       const headers = {
+           headers: {
+               'Authorization' : 'Bearer ' + token
+           }
+       }
+    const contents = await axios.get(`${url}api/contents?filters[Title][$contains]=${title}&populate=*`, headers)
+   return contents.data
+    }
+    catch(error){
+       console.log(error)
+    }
+   }

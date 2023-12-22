@@ -1,5 +1,3 @@
-'use client'
-
 import * as React from 'react';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
@@ -12,8 +10,9 @@ import { IconButton, InputBase, Paper, ThemeProvider, createTheme } from '@mui/m
 import FeaturedPost from '../components/FeaturePost';
 import Sidebar from '../components/Sidebar';
 import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
-import { getContents } from '../services/contents';
+import { getContents, searchContent } from '../services/contents';
 import Header from '../components/Header';
+import { contentsKeys } from '../queries/content';
 
 interface SocialItem {
   name: string;
@@ -58,7 +57,19 @@ export async function getStaticProps(){
 
 
 export default function Home() {
-  const { isLoading, isError, data, error } = useQuery({queryKey: ['contents'], queryFn: () => getContents()})
+
+const [search, setSearch] = React.useState<any>() 
+  // const { data } = useQuery({queryKey: ['contents'], queryFn: () => getContents()}) 
+  const { data } = useQuery(contentsKeys.contents.list())
+
+  React.useEffect(() => {
+    setSearch(data)
+  },[data])
+
+  const handleSearch = async (e: any) => {
+    const data = await searchContent(e.target.value)
+      setSearch(data)
+  }
 
   return (
 
@@ -72,6 +83,7 @@ export default function Home() {
             sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: { xs: 1, sm: "400px" } }}
           >
             <InputBase
+              onChange={handleSearch}
               sx={{ ml: 1, flex: 1 }}
               placeholder="Search"
               inputProps={{ 'aria-label': 'search' }}
@@ -81,9 +93,9 @@ export default function Home() {
             </IconButton>
           </Paper>
           <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <FeaturedPost post={data?.data} />
+            <FeaturedPost post={search?.data} />
             <div>
-              {data?.name}
+              {search?.name}
             </div>
             <Sidebar
               post={data?.data}
