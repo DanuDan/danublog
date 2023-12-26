@@ -9,8 +9,8 @@ import MainFeaturedPost from '../components/MainFeaturePost';
 import { IconButton, InputBase, Paper, ThemeProvider, createTheme } from '@mui/material';
 import FeaturedPost from '../components/FeaturePost';
 import Sidebar from '../components/Sidebar';
-import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
-import { getContents, searchContent } from '../services/contents';
+import { HydrationBoundary, QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
+import { searchContent } from '../services/contents';
 import Header from '../components/Header';
 import { contentsKeys } from '../queries/content';
 
@@ -44,22 +44,18 @@ const defaultTheme = createTheme({
 
 export async function getStaticProps(){
   const queryClient = new QueryClient()
-  await queryClient.prefetchQuery({ queryKey: ['contents'], queryFn: () => getContents()})
+  await queryClient.prefetchQuery(contentsKeys.contents.list())
 
   return {
     props: {
       dehydratedState: dehydrate(queryClient)
     },
-    revalidate: 60
   }
 }
 
-
-
-export default function Home() {
+export default function Home({dehydratedState}) {
 
 const [search, setSearch] = React.useState<any>() 
-  // const { data } = useQuery({queryKey: ['contents'], queryFn: () => getContents()}) 
   const { data } = useQuery(contentsKeys.contents.list())
 
   React.useEffect(() => {
@@ -73,6 +69,7 @@ const [search, setSearch] = React.useState<any>()
 
   return (
 
+    <HydrationBoundary state={dehydratedState}>
     <ThemeProvider theme={defaultTheme}>
       <Container maxWidth={"lg"}> 
         <Header title="Blog" />
@@ -107,6 +104,7 @@ const [search, setSearch] = React.useState<any>()
         </main>
       </Container>
     </ThemeProvider>
+    </HydrationBoundary>
   );
 }
 

@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { Box, Container, Grid, Paper, Typography } from "@mui/material"
-import { getContent, getContents } from '../../../services/contents';
+import { getContents } from '../../../services/contents';
 import parse from "html-react-parser"
-import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
+import { HydrationBoundary, QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
+import { contentsKeys } from '../../../queries/content';
+import Link from 'next/link';
 
 export const getStaticPaths = async () => {
     const data = await getContents()
-    const paths = data.data?.map(item => {
+    const paths = data?.data?.map((item: any) => {
         return {
             params: { slug: item.attributes.slug },
         }
@@ -17,25 +19,26 @@ export const getStaticPaths = async () => {
     };
   };
 
-export const getStaticProps = async (ctx) =>{
+export const getStaticProps = async ({params}) =>{
     const queryClient = new QueryClient()
-    const  slug  = ctx.params    
-    await queryClient.prefetchQuery({ queryKey: ['content'], queryFn: () => getContent(slug)})
-
+    const  slug  = params.slug
+    await queryClient.prefetchQuery(contentsKeys.contents.detail(params.slug))
+    await queryClient.refetchQueries()
     return {
         props: {
-          dehydratedState: dehydrate(queryClient).queries[0].state.data
+          dehydratedState: dehydrate(queryClient),
+          slug: slug
         },
-        revalidate: 10
       }
     }
 
-export default function detailBlog({ dehydratedState } : {dehydratedState?:any}) {
-    const posts = dehydratedState.data[0]
+export default function detailBlog({ dehydratedState, slug }) {
+    const { data } = useQuery(contentsKeys.contents.detail(slug),)
 
     return (
         <HydrationBoundary state={dehydratedState}>
         <Container maxWidth={`lg`}>
+            {data?.data[0] ? 
             <Grid>
                 <Paper
                     sx={{
@@ -46,10 +49,10 @@ export default function detailBlog({ dehydratedState } : {dehydratedState?:any})
                         backgroundSize: 'cover',
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'center',
-                        backgroundImage: `url(${"http://localhost:1337" + posts?.attributes?.ImageContent?.data.attributes.url})`,
+                        backgroundImage: `url(${"http://localhost:1337" + data?.data[0]?.attributes?.ImageContent?.data?.attributes.url})`,
                     }}
                 >
-                    {<img style={{ display: 'none' }} src={"https:" + posts?.attributes?.ImageContent?.data.attributes.url} alt="detailContent" />}
+                    {/* {<img style={{ display: 'none' }} src={"https:" + data?.data[0].attributes?.ImageContent?.data.attributes.url} alt="detailContent" />} */}
                     <Box
                         sx={{
                             position: 'absolute',
@@ -69,7 +72,7 @@ export default function detailBlog({ dehydratedState } : {dehydratedState?:any})
                                 }}
                             >
                                 <Typography component="h1" variant="h3" color="inherit" gutterBottom>
-                                    {posts?.attributes?.Title}
+                                    {data?.data[0]?.attributes?.Title}
                                 </Typography>
 
                             </Box>
@@ -77,15 +80,24 @@ export default function detailBlog({ dehydratedState } : {dehydratedState?:any})
                     </Grid>
                 </Paper>
                 <Typography component="h1" variant="h3" color="inherit" gutterBottom>
-                     {posts?.attributes?.Title}
+                     {data?.data[0]?.attributes?.Title}
                 </Typography>
                 <Typography variant="subtitle1" color="primary">
-                    Views : {posts?.attributes?.Views}
+                    Views : {data?.data[0]?.attributes?.Views}
                 </Typography>
                 <Typography component="h2" variant="h5">
-                    {parse(`${posts?.attributes?.content}`)}
+                    {parse(`${data?.data[0]?.attributes?.content}`)}
                 </Typography>
             </Grid>
+            : 
+            <Grid>
+                <Typography style={{cursor:'pointer'}} component="h2" variant="h5" mt={20} display="flex" justifyContent="center">
+                    <Link href="/" >
+                        CARI BERITA LAIN
+                    </Link>
+                </Typography>
+            </Grid>
+        }
         </Container>
         </HydrationBoundary>
     )

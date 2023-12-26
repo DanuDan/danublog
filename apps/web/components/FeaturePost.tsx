@@ -1,9 +1,9 @@
 'use client'
 
 import * as React from 'react';
+import Link from 'next/link'
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
-import CardActionArea from '@mui/material/CardActionArea';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import { Box, Grid } from '@mui/material';
@@ -17,12 +17,11 @@ export default function FeaturedPost({ post } : {post?:any}) {
             },
 
         }}>
-
             <Box sx={{
                 mt: 3
             }}>
                 {post?.map((post:any, i) => (
-                    <CardActionArea key={i} component="a" href={"blogs/" + post?.attributes.slug}>
+                    <Link key={i} href={"blogs/" + post?.attributes.slug}>
                         <Card  sx={{ display: 'flex', mb: 2 }}>
                             <CardContent sx={{ flex: 1 }}>
                                 <CardMedia
@@ -62,7 +61,7 @@ export default function FeaturedPost({ post } : {post?:any}) {
                                 alt="Content"
                             />
                         </Card>
-                    </CardActionArea>
+                    </Link>
                  ))
                 }
             </Box>
