@@ -29,12 +29,11 @@ export const getStaticProps = async ({params}) =>{
           dehydratedState: dehydrate(queryClient),
           slug: slug
         },
-      }
+      }      
     }
 
 export default function detailBlog({ dehydratedState, slug }) {
-    const { data } = useQuery(contentsKeys.contents.detail(slug),)
-
+    const { data } = useQuery({...contentsKeys.contents.detail(slug), refetchInterval: 5000})
     return (
         <HydrationBoundary state={dehydratedState}>
         <Container maxWidth={`lg`}>
@@ -52,7 +51,6 @@ export default function detailBlog({ dehydratedState, slug }) {
                         backgroundImage: `url(${"http://localhost:1337" + data?.data[0]?.attributes?.ImageContent?.data?.attributes.url})`,
                     }}
                 >
-                    {/* {<img style={{ display: 'none' }} src={"https:" + data?.data[0].attributes?.ImageContent?.data.attributes.url} alt="detailContent" />} */}
                     <Box
                         sx={{
                             position: 'absolute',

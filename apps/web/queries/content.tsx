@@ -7,18 +7,14 @@ import { getContent, getContents, searchContent } from "../services/contents";
       detail: (slug : string) => ({
         queryKey: ['contents'],
         queryFn: () => getContent({slug}),
-        refetchOnWindowFocus: false,
-        staleTime: 5000,
       }),
       list: () => ({
         queryKey: ['contents'],
-        queryFn: () => getContents(),
-        staleTime: 5000
+        queryFn: getContents,
       }),
       search: (title:string) => ({
         queryKey: ['contents'],
         queryFn: () => searchContent(title),
-        
       }),
     },
   },

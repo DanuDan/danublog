@@ -18,17 +18,17 @@ export default function FeaturedPost({ post } : {post?:any}) {
             <Box sx={{
                 mt: 3
             }}>
-                {post?.map((post:any, i) => (
+                {post?.map((post:any, i: number) => (
                     <Link key={i} href={"blogs/" + post?.attributes.slug}>
-                        <Card  sx={{ display: 'flex', mb: 2 }}>
+                        <Card  sx={{width:"auto", display: 'flex', mb: 2 }}>
                             <CardContent sx={{ flex: 1 }}>
                                 <CardMedia
                                     component="img"
-                                    sx={{ width: 400, display: { xs: 'block', sm: 'none' }, cursor: 'pointer' }}
+                                    sx={{ width: "full", display: { xs: 'block', sm: 'none' }, cursor: 'pointer' }}
                                     image={"http://localhost:1337" + post?.attributes.ImageContent.data.attributes.url}
                                     alt="Content"
                                 />
-                                <Typography component="h2" variant="h6">
+                                <Typography sx={{width: "full"}} component="h2" variant="h6">
                                     {post?.attributes.Title}
                                 </Typography>
                                 <Typography variant="subtitle1">
@@ -36,7 +36,7 @@ export default function FeaturedPost({ post } : {post?:any}) {
                                 </Typography>
                                 <Typography variant="subtitle2"
                                     sx={{
-                                        width: '400px',
+                                        width: '250px',
                                         overflow: 'hidden',
                                         textOverflow: 'ellipsis',
                                         display: '-webkit-box',
@@ -54,7 +54,7 @@ export default function FeaturedPost({ post } : {post?:any}) {
                             </CardContent>
                             <CardMedia
                                 component="img"
-                                sx={{ width: 200, height: 200, display: { xs: 'none', sm: 'block' } }}
+                                sx={{ width: 200, height: 218, display: { xs: 'none', sm: 'block' } }}
                                 image={"http://localhost:1337" + post?.attributes.ImageContent.data.attributes.url}
                                 alt="Content"
                             />

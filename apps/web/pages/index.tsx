@@ -6,11 +6,11 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import SearchIcon from '@mui/icons-material/Search';
 import MainFeaturedPost from '../components/MainFeaturePost';
-import { IconButton, InputBase, Paper, ThemeProvider, createTheme } from '@mui/material';
+import { Button, InputBase, Paper, ThemeProvider, createTheme } from '@mui/material';
 import FeaturedPost from '../components/FeaturePost';
 import Sidebar from '../components/Sidebar';
 import { HydrationBoundary, QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
-import { searchContent } from '../services/contents';
+import { getContents, searchContent } from '../services/contents';
 import Header from '../components/Header';
 import { contentsKeys } from '../queries/content';
 
@@ -55,20 +55,23 @@ export async function getStaticProps(){
 
 export default function Home({dehydratedState}) {
 
-const [search, setSearch] = React.useState<any>() 
-  const { data } = useQuery(contentsKeys.contents.list())
-
+  const [value, setValue] = React.useState<string>("")
+  const [search, setSearch] = React.useState<any>()
+  const { data } = useQuery({...contentsKeys.contents.list(), refetchOnWindowFocus: false})
+ 
   React.useEffect(() => {
-    setSearch(data)
+    setSearch(data?.data)
   },[data])
-
-  const handleSearch = async (e: any) => {
-    const data = await searchContent(e.target.value)
-      setSearch(data)
+  
+  const submitSearch = async (e: any) => {
+    if (e.keyCode === 13 && e.shiftKey == false){
+      e.preventDefault()  
+      const data = await searchContent(value)
+      setSearch(data.data)
+    }
   }
 
   return (
-
     <HydrationBoundary state={dehydratedState}>
     <ThemeProvider theme={defaultTheme}>
       <Container maxWidth={"lg"}> 
@@ -80,17 +83,18 @@ const [search, setSearch] = React.useState<any>()
             sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: { xs: 1, sm: "400px" } }}
           >
             <InputBase
-              onChange={handleSearch}
+              onChange={(e) => setValue(e.target.value)}
+              onKeyDown={submitSearch}
               sx={{ ml: 1, flex: 1 }}
               placeholder="Search"
               inputProps={{ 'aria-label': 'search' }}
             />
-            <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
-              <SearchIcon />
-            </IconButton>
+            <Button>
+              <SearchIcon/>
+            </Button>
           </Paper>
           <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <FeaturedPost post={search?.data} />
+            <FeaturedPost post={search} />
             <div>
               {search?.name}
             </div>
