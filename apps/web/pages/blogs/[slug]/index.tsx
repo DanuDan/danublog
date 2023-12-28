@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Box, Container, Grid, Paper, Typography } from "@mui/material"
-import { getContents } from '../../../services/contents';
+import { getContents, updateView } from '../../../services/contents';
 import parse from "html-react-parser"
-import { HydrationBoundary, QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
+import { HydrationBoundary, QueryClient, dehydrate, useMutation, useQuery } from '@tanstack/react-query';
 import { contentsKeys } from '../../../queries/content';
 import Link from 'next/link';
 
@@ -33,10 +33,22 @@ export const getStaticProps = async ({params}) =>{
     }
 
 export default function detailBlog({ dehydratedState, slug }) {
-    const { data } = useQuery({...contentsKeys.contents.detail(slug), refetchInterval: 5000})
+
+    
+    const { data, isFetching } = useQuery({...contentsKeys.contents.detail(slug), refetchOnWindowFocus: false})
+    const mutation = useMutation({ mutationFn: () => updateView(data?.data[0]?.id, data?.data[0]?.attributes.Views)})
+    
+
+        React.useEffect(() => {
+            if (data?.data[0].attributes.Views !== undefined){
+        mutation.mutate()
+        console.log(data?.data[0].attributes.Views)
+            }
+      },[isFetching])
+
     return (
         <HydrationBoundary state={dehydratedState}>
-        <Container maxWidth={`lg`}>
+        <Container maxWidth={`lg`}> 
             {data?.data[0] ? 
             <Grid>
                 <Paper

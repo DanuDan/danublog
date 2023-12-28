@@ -17,6 +17,12 @@ import { getContent, getContents, searchContent } from "../services/contents";
         queryFn: () => searchContent(title),
       }),
     },
+    action: {
+      updateView: (title:string) => ({
+        queryKey: ['contents'],
+        queryFn: () => searchContent(title),
+      }),
+    }
   },
 )
 

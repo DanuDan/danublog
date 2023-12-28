@@ -47,3 +47,23 @@ export const searchContent = async (title : string) => {
        console.log(error)
     }
    }
+
+export const updateView = async (id : number, value: number) => {
+    try{
+       const headers = {
+           headers: {
+               'Authorization' : 'Bearer ' + token
+           }
+       }
+       const request = {
+        "data": {
+          "Views": ++value
+        }
+      }
+    const response = await axios.put(`${url}api/contents/${id}`, request, headers)
+    return response.data
+}
+    catch(error){
+       console.log(error)
+    }
+   }
