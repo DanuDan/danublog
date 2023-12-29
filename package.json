@@ -20,7 +20,8 @@
   "engines": {
     "node": ">=18"
   },
-  "lint-staged": {    
-    "*.{js, jsx, ts, tsx}": "eslint --fix"
+  "lint-staged": {
+    "*.{js, jsx, ts, tsx}": "eslint --fix",
+    "**/*": "prettier --write --ignore-unknown"
   }
 }

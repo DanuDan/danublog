@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+pnpm turbo lint
 pnpm exec lint-staged
-# pnpm exec prettier --write
