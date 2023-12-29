@@ -11,8 +11,9 @@ import {
 } from "@tanstack/react-query";
 import { contentsKeys } from "../../../queries/content";
 import Link from "next/link";
+import { GetStaticPaths, GetStaticProps } from "next";
 
-export const getStaticPaths = async () => {
+export const getStaticPaths: GetStaticPaths = async () => {
   const data = await getContents();
   const paths = data?.data?.map((item: any) => {
     return {
@@ -25,7 +26,7 @@ export const getStaticPaths = async () => {
   };
 };
 
-export const getStaticProps = async ({ params }) => {
+export const getStaticProps: GetStaticProps = async ({ params }: any) => {
   const queryClient = new QueryClient();
   const slug = params.slug;
   await queryClient.prefetchQuery(contentsKeys.contents.detail(params.slug));
@@ -38,7 +39,13 @@ export const getStaticProps = async ({ params }) => {
   };
 };
 
-export default function detailBlog({ dehydratedState, slug }) {
+export default function detailBlog({
+  dehydratedState,
+  slug,
+}: {
+  dehydratedState: any;
+  slug: string;
+}) {
   const { data, isFetching } = useQuery({
     ...contentsKeys.contents.detail(slug),
     refetchOnWindowFocus: false,

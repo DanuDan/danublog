@@ -24,6 +24,7 @@ import {
 import { searchContent } from "../services/contents";
 import Header from "../components/Header";
 import { contentsKeys } from "../queries/content";
+import { GetStaticProps } from "next";
 
 interface SocialItem {
   name: string;
@@ -52,7 +53,7 @@ const defaultTheme = createTheme({
   },
 });
 
-export async function getStaticProps() {
+export const getStaticProps: GetStaticProps = async () => {
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery(contentsKeys.contents.list());
 
@@ -61,9 +62,9 @@ export async function getStaticProps() {
       dehydratedState: dehydrate(queryClient),
     },
   };
-}
+};
 
-export default function Home({ dehydratedState }) {
+export default function Home({ dehydratedState }: { dehydratedState: any }) {
   const [value, setValue] = React.useState<string>("");
   const [search, setSearch] = React.useState<any>();
   const { data } = useQuery({
