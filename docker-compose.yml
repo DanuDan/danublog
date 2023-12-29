@@ -11,14 +11,14 @@ services:
       - 3000:3000
     networks:
       - app_network
-  api:
-    container_name: strapi
+  strapiproject:
+    container_name: strapiproject
     build:
-      context: .
-      dockerfile: ./apps/api/Dockerfile
+      context: ../../teststrapi/strapiproject
+      dockerfile: ./Dockerfile
     restart: always
     ports:
-      - 3001:3001
+      - 1337:1337
     networks:
       - app_network
 
