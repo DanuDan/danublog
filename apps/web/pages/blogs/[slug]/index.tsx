@@ -1,21 +1,23 @@
-import * as React from "react";
-import { Box, Container, Grid, Paper, Typography } from "@mui/material";
-import { getContents, updateView } from "../../../services/contents";
-import parse from "html-react-parser";
+import * as React from 'react';
+import { Box, Container, Grid, Paper, Typography } from '@mui/material';
+import { getContents, updateView } from '../../../services/contents';
+import parse from 'html-react-parser';
 import {
   HydrationBoundary,
   QueryClient,
   dehydrate,
   useMutation,
   useQuery,
-} from "@tanstack/react-query";
-import { contentsKeys } from "../../../queries/content";
-import Link from "next/link";
-import { GetStaticPaths, GetStaticProps } from "next";
+} from '@tanstack/react-query';
+import { contentsKeys } from '../../../queries/content';
+import Link from 'next/link';
+import { GetStaticPaths, GetStaticProps } from 'next';
+import { ContentResponse } from '../../../../../types/types';
+import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const data = await getContents();
-  const paths = data?.data?.map((item: any) => {
+  const paths = data?.data?.map((item: ContentResponse) => {
     return {
       params: { slug: item.attributes.slug },
     };
@@ -26,7 +28,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export const getStaticProps: GetStaticProps = async ({ params }: any) => {
+export const getStaticProps: GetStaticProps = async ({ params }: Params) => {
   const queryClient = new QueryClient();
   const slug = params.slug;
   await queryClient.prefetchQuery(contentsKeys.contents.detail(params.slug));
@@ -58,7 +60,6 @@ export default function detailBlog({
   React.useEffect(() => {
     if (data?.data[0].attributes.Views !== undefined) {
       mutation.mutate();
-      console.log(data?.data[0].attributes.Views);
     }
   }, [isFetching]);
 
@@ -69,42 +70,42 @@ export default function detailBlog({
           <Grid>
             <Paper
               sx={{
-                position: "relative",
-                backgroundColor: "grey.800",
-                color: "#fff",
+                position: 'relative',
+                backgroundColor: 'grey.800',
+                color: '#fff',
                 mb: 4,
-                backgroundSize: "cover",
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center",
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
                 backgroundImage: `url(${
-                  "http://localhost:1337" +
+                  'http://localhost:1337' +
                   data?.data[0]?.attributes?.ImageContent?.data?.attributes.url
                 })`,
               }}
             >
               <Box
                 sx={{
-                  position: "absolute",
+                  position: 'absolute',
                   top: 0,
                   bottom: 0,
                   right: 0,
                   left: 0,
-                  backgroundColor: "rgba(0,0,0,.3)",
+                  backgroundColor: 'rgba(0,0,0,.3)',
                 }}
               />
               <Grid container>
-                <Grid item md={6} padding={2}>
+                <Grid item md={8} padding={2}>
                   <Box
                     sx={{
-                      height: "400px",
-                      position: "relative",
+                      height: '400px',
+                      position: 'relative',
                     }}
                   >
                     <Typography
-                      component="h1"
-                      variant="h3"
-                      color="inherit"
                       gutterBottom
+                      sx={{
+                        typography: { xs: 'h4', md: 'h3' },
+                      }}
                     >
                       {data?.data[0]?.attributes?.Title}
                     </Typography>
@@ -113,31 +114,31 @@ export default function detailBlog({
               </Grid>
             </Paper>
             <Typography
-              component="h1"
-              variant="h3"
-              color="inherit"
               gutterBottom
+              sx={{
+                typography: { xs: 'h4', md: 'h3' },
+              }}
             >
               {data?.data[0]?.attributes?.Title}
             </Typography>
-            <Typography variant="subtitle1" color="primary">
+            <Typography variant='subtitle1' color='primary'>
               Views : {data?.data[0]?.attributes?.Views}
             </Typography>
-            <Typography component="h2" variant="h5">
+            <Typography component='h2' variant='h5'>
               {parse(`${data?.data[0]?.attributes?.content}`)}
             </Typography>
           </Grid>
         ) : (
           <Grid>
             <Typography
-              style={{ cursor: "pointer" }}
-              component="h2"
-              variant="h5"
+              style={{ cursor: 'pointer' }}
+              component='h2'
+              variant='h5'
               mt={20}
-              display="flex"
-              justifyContent="center"
+              display='flex'
+              justifyContent='center'
             >
-              <Link href="/">CARI BERITA LAIN</Link>
+              <Link href='/'>CARI BERITA LAIN</Link>
             </Typography>
           </Grid>
         )}

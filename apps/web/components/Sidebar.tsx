@@ -1,23 +1,20 @@
-import * as React from "react";
-import Grid from "@mui/material/Grid";
-import Stack from "@mui/material/Stack";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import Link from "@mui/material/Link";
-import { Card, CardContent, CardMedia } from "@mui/material";
+import * as React from 'react';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
+import { Card, CardContent, CardMedia } from '@mui/material';
+import { ContentResponse, SidebarProps } from '../../../types/types';
 
 export default function Sidebar({
-  description,
-  social,
-  title,
+  sidebarProps,
   post,
 }: {
-  description?: any;
-  social?: any;
-  title?: any;
-  post?: any;
+  sidebarProps: SidebarProps;
+  post?: ContentResponse[];
 }) {
-  const topPopularPosts: any[] = post
+  const topPopularPosts: ContentResponse[] | undefined = post
     ?.sort(
       (
         a: { attributes: { Views: number } },
@@ -29,51 +26,51 @@ export default function Sidebar({
     .slice(0, 5);
 
   return (
-    <Grid item xs={20} md={4}>
-      <Paper elevation={0} sx={{ p: 2, bgcolor: "grey.200" }}>
-        <Typography variant="h6" gutterBottom>
-          {title}
+    <Grid item xs={12} md={4} sx={{ mt: 3 }}>
+      <Paper elevation={0} sx={{ p: 2, bgcolor: 'grey.200' }}>
+        <Typography variant='h6' gutterBottom>
+          {sidebarProps.title}
         </Typography>
-        <Typography>{description}</Typography>
+        <Typography>{sidebarProps.description}</Typography>
         {topPopularPosts?.map((items, i) => (
-          <Card key={i} sx={{ display: "flex", mt: 2 }}>
+          <Card key={i} sx={{ display: 'flex', mt: 2 }}>
             <CardContent sx={{ flex: 1 }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
+              <Typography variant='subtitle2' sx={{ fontWeight: 'bold' }}>
                 {items.attributes.Title}
               </Typography>
-              <Typography variant="subtitle2">
+              <Typography variant='subtitle2'>
                 {items.attributes.Date}
               </Typography>
             </CardContent>
             <CardMedia
-              component="img"
+              component='img'
               sx={{
                 width: 100,
                 height: 100,
-                display: { xs: "none", sm: "block" },
+                display: { xs: 'none', sm: 'block' },
               }}
               image={
-                "http://localhost:1337" +
+                'http://localhost:1337' +
                 items?.attributes.ImageContent.data.attributes.url
               }
-              alt="populerContent"
+              alt='populerContent'
             />
           </Card>
         ))}
       </Paper>
-      <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
+      <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
         Social
       </Typography>
 
-      {social.map((items: any) => (
+      {sidebarProps.social.map((items: any) => (
         <Link
-          display="block"
-          variant="body1"
-          href="#"
+          display='block'
+          variant='body1'
+          href='#'
           key={items?.name}
           sx={{ mb: 0.5 }}
         >
-          <Stack direction="row" spacing={1} alignItems="center">
+          <Stack direction='row' spacing={1} alignItems='center'>
             <items.icon />
             <span>{items.name}</span>
           </Stack>

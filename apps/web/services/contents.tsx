@@ -1,13 +1,13 @@
-import axios from "axios";
+import axios from 'axios';
 
-const url = process.env.NEXT_PUBLIC_HOST_API || " ";
-const token = process.env.NEXT_PUBLIC_TOKEN_API || " ";
+const url = process.env.NEXT_PUBLIC_HOST_API || ' ';
+const token = process.env.NEXT_PUBLIC_TOKEN_API || ' ';
 
 export const getContents = async () => {
   try {
     const headers = {
       headers: {
-        Authorization: "Bearer " + token,
+        Authorization: 'Bearer ' + token,
       },
     };
     const contents = await axios.get(`${url}api/contents?populate=*`, headers);
@@ -21,7 +21,7 @@ export const getContent = async ({ slug }: { slug: string }) => {
   try {
     const headers = {
       headers: {
-        Authorization: "Bearer " + token,
+        Authorization: 'Bearer ' + token,
       },
     };
     const contents = await axios.get(
@@ -38,7 +38,7 @@ export const searchContent = async (title: string) => {
   try {
     const headers = {
       headers: {
-        Authorization: "Bearer " + token,
+        Authorization: 'Bearer ' + token,
       },
     };
     const contents = await axios.get(
@@ -55,7 +55,7 @@ export const updateView = async (id: number, value: number) => {
   try {
     const headers = {
       headers: {
-        Authorization: "Bearer " + token,
+        Authorization: 'Bearer ' + token,
       },
     };
     const request = {
