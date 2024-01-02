@@ -1,27 +1,31 @@
 {
-  "name": "inilahblog",
-  "version": "0.1.0",
+  "name": "myproject",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@contentful/rich-text-react-renderer": "^15.19.0",
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.14.19",
-    "@mui/material": "^5.14.20",
-    "@tanstack/react-query": "^5.12.2",
-    "contentful": "^10.6.14",
-    "next": "14.0.3",
-    "react": "^18",
-    "react-dom": "^18"
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "prepare": "husky install"
   },
   "devDependencies": {
-    "eslint": "^8",
-    "eslint-config-next": "14.0.3"
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.1.0",
+    "turbo": "latest"
+  },
+  "packageManager": "pnpm@8.9.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "lint-staged": {
+    "*.{js, jsx, ts, tsx}": "eslint --fix",
+    "**/*": "prettier --write --ignore-unknown"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "jsxSingleQuote": true
   }
 }
