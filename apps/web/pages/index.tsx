@@ -25,7 +25,7 @@ import { searchContent } from '../services/contents';
 import Header from '../components/Header';
 import { contentsKeys } from '../queries/content';
 import { GetStaticProps } from 'next';
-import { APIContent, SidebarProps } from '../../../types/types';
+import { SidebarProps } from '../../../types/types';
 
 const sidebar: SidebarProps = {
   title: 'Most Populer',
