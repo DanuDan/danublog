@@ -28,3 +28,8 @@ export interface ContentResponse {
   id: number;
   attributes: ContentProps;
 }
+
+export interface APIContent {
+  data?: ContentResponse[];
+  meta?: any;
+}

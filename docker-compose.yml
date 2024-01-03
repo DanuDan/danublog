@@ -17,6 +17,8 @@ services:
       context: ../../teststrapi/strapiproject
       dockerfile: ./Dockerfile
     restart: always
+    environment:
+      - STRAPI_VERSION=4.15.5
     ports:
       - 1337:1337
     networks:

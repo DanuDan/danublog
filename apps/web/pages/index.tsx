@@ -7,6 +7,7 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import SearchIcon from '@mui/icons-material/Search';
 import MainFeaturedPost from '../components/MainFeaturePost';
 import {
+  Box,
   Button,
   InputBase,
   Paper,
@@ -18,6 +19,7 @@ import Sidebar from '../components/Sidebar';
 import {
   HydrationBoundary,
   QueryClient,
+  QueryObserverResult,
   dehydrate,
   useQuery,
 } from '@tanstack/react-query';
@@ -25,7 +27,12 @@ import { searchContent } from '../services/contents';
 import Header from '../components/Header';
 import { contentsKeys } from '../queries/content';
 import { GetStaticProps } from 'next';
-import { SidebarProps } from '../../../types/types';
+import {
+  APIContent,
+  ContentResponse,
+  SidebarProps,
+} from '../../../types/types';
+import FeatureLoading from '../components/FeatureLoading';
 
 const sidebar: SidebarProps = {
   title: 'Most Populer',
@@ -56,21 +63,21 @@ export const getStaticProps: GetStaticProps = async () => {
 
 export default function Home({ dehydratedState }: { dehydratedState: any }) {
   const [value, setValue] = React.useState<string>('');
-  const [search, setSearch] = React.useState<SidebarProps>();
-  const { data } = useQuery({
+  const [search, setSearch] = React.useState<ContentResponse[]>();
+  const { data, isLoading }: QueryObserverResult<APIContent, Error> = useQuery({
     ...contentsKeys.contents.list(),
     refetchOnWindowFocus: false,
   });
 
   React.useEffect(() => {
     setSearch(data?.data);
-  }, [data]);
+  }, [data?.data]);
 
   const submitSearch = async (e: any) => {
     if (e.keyCode === 13 && e.shiftKey == false) {
       e.preventDefault();
-      const data = await searchContent(value);
-      setSearch(data.data);
+      const response: APIContent = await searchContent(value);
+      setSearch(response?.data);
     }
   };
 
@@ -80,7 +87,11 @@ export default function Home({ dehydratedState }: { dehydratedState: any }) {
         <Container maxWidth={'lg'}>
           <Header title='Blog' />
           <main>
-            <MainFeaturedPost post={data?.data[0]} />
+            {isLoading ? (
+              <FeatureLoading />
+            ) : (
+              <MainFeaturedPost post={data?.data?.[0]} />
+            )}
             <Paper
               component='form'
               sx={{
@@ -101,14 +112,16 @@ export default function Home({ dehydratedState }: { dehydratedState: any }) {
                 <SearchIcon />
               </Button>
             </Paper>
-            <Grid
-              container
-              spacing={2}
-              sx={{ display: 'flex', justifyContent: 'space-between' }}
-            >
-              <FeaturedPost post={search} />
-              <Sidebar post={data?.data} sidebarProps={sidebar} />
-            </Grid>
+            <Box sx={{ flexGrow: 1 }}>
+              <Grid
+                container
+                spacing={2}
+                sx={{ display: 'flex', justifyContent: 'space-between' }}
+              >
+                <FeaturedPost post={search} />
+                <Sidebar post={data?.data} sidebarProps={sidebar} />
+              </Grid>
+            </Box>
           </main>
         </Container>
       </ThemeProvider>

@@ -4,8 +4,9 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import parse from 'html-react-parser';
+import { ContentResponse } from '../../../types/types';
 
-export default function MainFeaturedPost({ post }: { post?: any }) {
+export default function MainFeaturedPost({ post }: { post?: ContentResponse }) {
   return (
     <Paper
       sx={{

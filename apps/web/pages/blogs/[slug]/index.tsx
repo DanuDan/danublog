@@ -5,6 +5,7 @@ import parse from 'html-react-parser';
 import {
   HydrationBoundary,
   QueryClient,
+  QueryObserverResult,
   dehydrate,
   useMutation,
   useQuery,
@@ -12,8 +13,9 @@ import {
 import { contentsKeys } from '../../../queries/content';
 import Link from 'next/link';
 import { GetStaticPaths, GetStaticProps } from 'next';
-import { ContentResponse } from '../../../../../types/types';
+import { APIContent, ContentResponse } from '../../../../../types/types';
 import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
+import FeatureLoading from '../../../components/FeatureLoading';
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const data = await getContents();
@@ -48,17 +50,25 @@ export default function detailBlog({
   dehydratedState: any;
   slug: string;
 }) {
-  const { data, isFetching } = useQuery({
+  const {
+    data,
+    isLoading,
+    isFetching,
+  }: QueryObserverResult<APIContent, Error> = useQuery({
     ...contentsKeys.contents.detail(slug),
     refetchOnWindowFocus: false,
   });
+
   const mutation = useMutation({
     mutationFn: () =>
-      updateView(data?.data[0]?.id, data?.data[0]?.attributes.Views),
+      updateView(
+        data?.data?.[0]?.id ?? 0,
+        data?.data?.[0]?.attributes.Views ?? 0,
+      ),
   });
 
   React.useEffect(() => {
-    if (data?.data[0].attributes.Views !== undefined) {
+    if (data?.data?.[0]?.attributes.Views !== undefined) {
       mutation.mutate();
     }
   }, [isFetching]);
@@ -66,81 +76,88 @@ export default function detailBlog({
   return (
     <HydrationBoundary state={dehydratedState}>
       <Container maxWidth={`lg`}>
-        {data?.data[0] ? (
-          <Grid>
-            <Paper
-              sx={{
-                position: 'relative',
-                backgroundColor: 'grey.800',
-                color: '#fff',
-                mb: 4,
-                backgroundSize: 'cover',
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'center',
-                backgroundImage: `url(${
-                  'http://localhost:1337' +
-                  data?.data[0]?.attributes?.ImageContent?.data?.attributes.url
-                })`,
-              }}
-            >
-              <Box
-                sx={{
-                  position: 'absolute',
-                  top: 0,
-                  bottom: 0,
-                  right: 0,
-                  left: 0,
-                  backgroundColor: 'rgba(0,0,0,.3)',
-                }}
-              />
-              <Grid container>
-                <Grid item md={8} padding={2}>
+        {isLoading ? (
+          <FeatureLoading />
+        ) : (
+          <>
+            {data?.data?.[0] ? (
+              <Grid>
+                <Paper
+                  sx={{
+                    position: 'relative',
+                    backgroundColor: 'grey.800',
+                    color: '#fff',
+                    mb: 4,
+                    backgroundSize: 'cover',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center',
+                    backgroundImage: `url(${
+                      'http://localhost:1337' +
+                      data?.data[0]?.attributes?.ImageContent?.data?.attributes
+                        .url
+                    })`,
+                  }}
+                >
                   <Box
                     sx={{
-                      height: '400px',
-                      position: 'relative',
+                      position: 'absolute',
+                      top: 0,
+                      bottom: 0,
+                      right: 0,
+                      left: 0,
+                      backgroundColor: 'rgba(0,0,0,.3)',
                     }}
-                  >
-                    <Typography
-                      gutterBottom
-                      sx={{
-                        typography: { xs: 'h4', md: 'h3' },
-                      }}
-                    >
-                      {data?.data[0]?.attributes?.Title}
-                    </Typography>
-                  </Box>
-                </Grid>
+                  />
+                  <Grid container>
+                    <Grid item md={8} padding={2}>
+                      <Box
+                        sx={{
+                          height: '400px',
+                          position: 'relative',
+                        }}
+                      >
+                        <Typography
+                          gutterBottom
+                          sx={{
+                            typography: { xs: 'h4', md: 'h3' },
+                          }}
+                        >
+                          {data?.data[0]?.attributes?.Title}
+                        </Typography>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </Paper>
+                <Typography
+                  gutterBottom
+                  sx={{
+                    typography: { xs: 'h4', md: 'h3' },
+                  }}
+                >
+                  {data?.data[0]?.attributes?.Title}
+                </Typography>
+                <Typography variant='subtitle1' color='primary'>
+                  Views : {data?.data[0]?.attributes?.Views}
+                </Typography>
+                <Typography component='h2' variant='h5'>
+                  {parse(`${data?.data[0]?.attributes?.content}`)}
+                </Typography>
               </Grid>
-            </Paper>
-            <Typography
-              gutterBottom
-              sx={{
-                typography: { xs: 'h4', md: 'h3' },
-              }}
-            >
-              {data?.data[0]?.attributes?.Title}
-            </Typography>
-            <Typography variant='subtitle1' color='primary'>
-              Views : {data?.data[0]?.attributes?.Views}
-            </Typography>
-            <Typography component='h2' variant='h5'>
-              {parse(`${data?.data[0]?.attributes?.content}`)}
-            </Typography>
-          </Grid>
-        ) : (
-          <Grid>
-            <Typography
-              style={{ cursor: 'pointer' }}
-              component='h2'
-              variant='h5'
-              mt={20}
-              display='flex'
-              justifyContent='center'
-            >
-              <Link href='/'>CARI BERITA LAIN</Link>
-            </Typography>
-          </Grid>
+            ) : (
+              <Grid>
+                <Typography
+                  style={{ cursor: 'pointer' }}
+                  component='h2'
+                  variant='h5'
+                  mt={20}
+                  display='flex'
+                  justifyContent='center'
+                >
+                  <Link href='/'>CARI BERITA LAIN</Link>
+                </Typography>
+              </Grid>
+            )}
+          </>
         )}
       </Container>
     </HydrationBoundary>
